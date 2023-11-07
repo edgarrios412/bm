@@ -7,8 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Order({navigation}) {
 
-    const [order, setOrder] = useState()
-
     const [carne, setCarne] = useState(0)
     const [queso, setQueso] = useState(0)
     const [jamon, setJamon] = useState(0)
@@ -18,7 +16,7 @@ export default function Order({navigation}) {
     const [cebolla, setCebolla] = useState(0)
     const [papitas, setPapitas] = useState(0)
     const [salsa, setSalsa] = useState(0)
-
+    
     const [payMethod, setPayMethod] = useState(1)
 
     const newOrder = async () => {
@@ -29,7 +27,7 @@ export default function Order({navigation}) {
             return navigation.navigate("Home")
         }
         const id = await AsyncStorage.getItem('id');
-        await axios.post("/user/order", {userId:id, price:price, status:1})
+        await axios.post("/user/order", {userId:id, price:price, status:1, ingredients:[carne,queso,jamon,tocineta,lechuga,tomate,cebolla,papitas,salsa]})
         await axios.put("/user", {id:id, balance:balance-price})
         await AsyncStorage.setItem('balance', (balance-price).toString())
         navigation.navigate("Home")

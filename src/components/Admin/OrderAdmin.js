@@ -4,25 +4,23 @@ import tw from "twrnc"
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function OrderDetail({navigation, route}) {
+export default function OrderAdmin({navigation, route}) {
 
-    const {id} = route.params
+    const { id } = route.params;
+
+    const [step, setStep] = useState(0)
     const [order, setOrder] = useState()
 
     useEffect(() => {
         axios.get("/order?id="+id)
         .then(({data}) => setOrder(data))
+
     },[order])
 
-    const cashBack = async () => {
-        const userId = await AsyncStorage.getItem('id');
-        const balance = await AsyncStorage.getItem('balance')
-        await axios.put("/user", {id:userId, balance: Number(balance)+order.price*0.05})
-        await AsyncStorage.setItem('balance', (Number(balance)+Number(order.price*0.05)).toString())
-        alert("Te hemos retornado el 5% de la compra")
-        return navigation.navigate("Home")
+    const changeStatus = async () => {
+        await axios.put("/order", {id:id, status:Number(order.status)+1})
+        setOrder({...order})
     }
 
     return(
@@ -54,8 +52,8 @@ export default function OrderDetail({navigation, route}) {
                 <FontAwesome name="check-circle" size={24} color={order?.status >= 3 ? "#d82435" : "#DDDDDD"} />
                 <Text style={tw`text-base ${order?.status >= 3 ? "font-bold":"text-gray-500"}`}>Hemos entregado tu pedido</Text>
             </View>
-            {order?.status >= 3 && <TouchableOpacity onPress={cashBack} style={{...tw` py-3 rounded-md mt-14`, backgroundColor:"#d82435"}}>
-                <Text style={tw`text-white text-center font-semibold text-xl`}>Calificar servicio</Text>
+            {order?.status <= 2 && <TouchableOpacity onPress={changeStatus} style={{...tw` py-3 rounded-md mt-14`, backgroundColor:"#d82435"}}>
+                <Text style={tw`text-white text-center font-semibold text-xl`}>Siguiente paso</Text>
             </TouchableOpacity>}
             <TouchableOpacity onPress={() => navigation.navigate("Home")} style={{...tw` py-3 rounded-md mt-2`, backgroundColor:"#d82435"}}>
                 <Text style={tw`text-white text-center font-semibold text-xl`}>Volver</Text>

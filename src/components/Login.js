@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import tw from "twrnc"
 import { Feather } from '@expo/vector-icons';
@@ -21,6 +21,16 @@ export default function Login({navigation}) {
       alert("Datos invalidos")
     }
   }
+
+  const authUser = async () => {
+    const id = await AsyncStorage.getItem('id')
+    if(id == null) return
+    return navigation.navigate("Home")
+  }
+
+  useEffect(() => {
+    authUser()
+  },[])
 
   return (
     <View>

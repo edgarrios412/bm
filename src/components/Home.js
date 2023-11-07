@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Home({isFocused, navigation}) {
+export default function Home({ navigation}) {
 
   // const [fontsLoaded] = useFonts({
   //   LexendBold: require("../../assets/fonts/Lexend-Bold.ttf"),
@@ -26,11 +26,14 @@ export default function Home({isFocused, navigation}) {
   // if(!fontsLoaded) return null
 
   const [user, setUser] = useState()
+  const [order, setOrder] = useState()
   
   const getUser = async () => {
     const id = await AsyncStorage.getItem('id');
     const {data} = await axios.get("/user/"+id)
     setUser(data)
+    setOrder(data.orders.sort((a, b) => b.id - a.id))
+    await AsyncStorage.setItem('balance', data.balance.toString());
   }
 
   useEffect(() => {
@@ -56,8 +59,10 @@ export default function Home({isFocused, navigation}) {
     setUser({...user, balance: Number(user.balance)+5000})
     await AsyncStorage.setItem('balance', (Number(user?.balance)+5000).toString());
   }
-  const handlePress = () => {
-    alert("Boton Home")
+
+  const logout = async () => {
+    await AsyncStorage.removeItem("id")
+    navigation.navigate("Login")
   }
 
   return (
@@ -68,10 +73,11 @@ export default function Home({isFocused, navigation}) {
             <Text style={{...tw` text-3xl text-gray-700`,  }}>${Number(user?.balance).toLocaleString().replace(".",",")}</Text>
         </View>
         <View style={tw`flex-row items-center gap-5`}>
-            <TouchableOpacity onPress={() => alert("Mostrar notificaciones")}>
-        <Ionicons style={tw` top-6`} name="notifications-outline" size={26} color="grey" />
+            <TouchableOpacity onPress={logout}>
+            <MaterialIcons style={tw` top-6`} name="logout" size={24} color="grey" />
+        {/* <Ionicons style={tw` top-6`} name="notifications-outline" size={26} color="grey" /> */}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => alert("Mostrar perfil")}>
+            <TouchableOpacity onPress={() => {user?.role > 2 ? navigation.navigate("Administracion") : null}}>
             <Image
             source={{
                 uri: 'https://food-images.files.bbci.co.uk/food/recipes/black_and_blue_burger_95881_16x9.jpg',
@@ -109,12 +115,12 @@ export default function Home({isFocused, navigation}) {
       </View>
       <View style={tw`mt-10`}>
         <Text style={tw`font-semibold text-xl`}>Pedidos pendientes</Text>
-        {user?.orders.map(p =>
-        <TouchableOpacity onPress={() => navigation.navigate("Detalle")} key={p.id} style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>
+        {order?.map(p =>
+        <TouchableOpacity onPress={() => navigation.navigate("Detalle", {id:p.id})} key={p.id} style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>
           <View>
-          {p.status == 1 && <Text style={tw`font-semibold text-gray-600`}>Compra (Cocinando)</Text>}
-          {p.status == 2 && <Text style={tw`font-semibold text-gray-600`}>Compra (Enviado)</Text>}
-          {p.status == 3 && <Text style={tw`font-semibold text-gray-600`}>Compra (Entregado)</Text>}
+          {p.status == 1 && <Text style={tw`font-semibold text-gray-600`}>Compra</Text>}
+          {p.status == 2 && <Text style={tw`font-semibold text-gray-600`}>Compra</Text>}
+          {p.status >= 3 && <Text style={tw`font-semibold text-gray-600`}>Compra</Text>}
           <Text style={tw`text-xs text-gray-400`}>02/11/23</Text>
           </View>
           <Text style={tw`text-red-600 font-semibold`}>-${Number(p.price).toLocaleString().replace(".",",")}</Text>
