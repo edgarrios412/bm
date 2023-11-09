@@ -24,7 +24,7 @@ export default function OrderAdmin({navigation, route}) {
     }
 
     return(
-        <ScrollView style={tw`top-0 w-full bg-white p-10 `}>
+        <ScrollView style={tw`top-0 w-full bg-white p-10 h-full`}>
             <Text style={tw`text-center font-bold text-xl mt-0`}>Orden #{order?.id}</Text>
             <Text style={tw`text-center text-gray-400 text-sm mb-10`}>02/12/23 08:00 pm</Text>
             <Text style={tw`font-bold text-xl`}>Detalle del pedido</Text>
@@ -55,7 +55,7 @@ export default function OrderAdmin({navigation, route}) {
             {order?.status <= 2 && <TouchableOpacity onPress={changeStatus} style={{...tw` py-3 rounded-md mt-14`, backgroundColor:"#d82435"}}>
                 <Text style={tw`text-white text-center font-semibold text-xl`}>Siguiente paso</Text>
             </TouchableOpacity>}
-            <TouchableOpacity onPress={() => navigation.navigate("Home")} style={{...tw` py-3 rounded-md mt-2`, backgroundColor:"#d82435"}}>
+            <TouchableOpacity onPress={() => navigation.navigate("Home")} style={{...tw` py-3 rounded-md mt-2 mb-26`, backgroundColor:"#d82435"}}>
                 <Text style={tw`text-white text-center font-semibold text-xl`}>Volver</Text>
             </TouchableOpacity>
         </ScrollView>

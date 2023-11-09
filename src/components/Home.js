@@ -13,6 +13,9 @@ import React, { useEffect, useState } from 'react';
 
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Skeleton } from 'moti/skeleton';
+import { MotiView } from 'moti';
+import useSWR from 'swr';
 
 export default function Home({ navigation}) {
 
@@ -27,7 +30,7 @@ export default function Home({ navigation}) {
 
   const [user, setUser] = useState()
   const [order, setOrder] = useState()
-  
+
   const getUser = async () => {
     const id = await AsyncStorage.getItem('id');
     const {data} = await axios.get("/user/"+id)
@@ -65,12 +68,27 @@ export default function Home({ navigation}) {
     navigation.navigate("Login")
   }
 
+  const Spacer = ({height = 16}) => <MotiView style={{height}}/>
+
+  const SkeletonOrder = () => {
+    return(
+      <>
+      <Spacer/>
+      <Skeleton width={"100%"} height={55} colorMode='light'/>
+      <Spacer/>
+      <Skeleton width={"100%"} height={55} colorMode='light'/>
+      <Spacer/>
+      <Skeleton width={"100%"} height={55} colorMode='light'/>
+      </>
+    )
+  }
+
   return (
     <ScrollView style={tw`top-0 w-full bg-white p-10`}>
       <View style={tw`w-full flex-row justify-between items-center`}>
         <View>
-            <Text style={{...tw`mt-8 text-lg text-gray-400 leading-7 `,  }}>Balance</Text>
-            <Text style={{...tw` text-3xl text-gray-700`,  }}>${Number(user?.balance).toLocaleString().replace(".",",")}</Text>
+            <Text style={{...tw`mt-8 text-lg text-gray-400 leading-7 `, }}>Balance</Text>
+            {user ? <Text style={{...tw` text-3xl text-gray-700`,  }}>${Number(user?.balance).toLocaleString().replace(".",",")}</Text> : <><Spacer height={3}/><Skeleton colorMode='light' height={35} width={100}/></>}
         </View>
         <View style={tw`flex-row items-center gap-5`}>
             <TouchableOpacity onPress={logout}>
@@ -115,7 +133,8 @@ export default function Home({ navigation}) {
       </View>
       <View style={tw`mt-10`}>
         <Text style={tw`font-semibold text-xl`}>Pedidos pendientes</Text>
-        {order?.map(p =>
+        {!user ? <SkeletonOrder/> :
+        order?.map(p =>
         <TouchableOpacity onPress={() => navigation.navigate("Detalle", {id:p.id})} key={p.id} style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>
           <View>
           {p.status == 1 && <Text style={tw`font-semibold text-gray-600`}>Compra</Text>}
@@ -129,7 +148,7 @@ export default function Home({ navigation}) {
       </View>
       <View style={tw`mt-10`}>
         <Text style={tw`font-semibold text-xl`}>Historial</Text>
-        <View style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>
+        {user ? <><View style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>
           <View>
           <Text style={tw`font-semibold text-gray-600`}>Recarga Nequi</Text>
           <Text style={tw`text-xs text-gray-400`}>02/11/23</Text>
@@ -156,7 +175,7 @@ export default function Home({ navigation}) {
           <Text style={tw`text-xs text-gray-400`}>01/11/23</Text>
           </View>
           <Text style={tw`text-red-600 font-semibold`}>-$13,000</Text>
-        </View>
+        </View></> : <SkeletonOrder/>}
       </View>
     </ScrollView>
   )

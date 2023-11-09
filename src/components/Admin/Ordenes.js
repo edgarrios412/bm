@@ -17,7 +17,6 @@ const Order = ({navigation}) => {
     })
 
     return(
-        // TODO: Crear una ruta que obtenga todas las ordenes activas
         <ScrollView style={tw`top-0 w-full bg-white p-10`}>
         {order?.map(p =>
         p.status <= 2 && <TouchableOpacity key={p.id} onPress={() => navigation.navigate("Administrar Orden", {id:p.id})} style={tw`flex-row justify-between items-center rounded-md border border-gray-200 mt-3 px-4 py-3`}>

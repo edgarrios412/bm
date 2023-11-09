@@ -22,15 +22,15 @@ export default function Login({navigation}) {
     }
   }
 
-  const authUser = async () => {
-    const id = await AsyncStorage.getItem('id')
-    if(id == null) return
-    return navigation.navigate("Home")
-  }
+  // const authUser = async () => {
+  //   const id = await AsyncStorage.getItem('id')
+  //   if(id == null) return
+  //   return navigation.navigate("Home")
+  // }
 
-  useEffect(() => {
-    authUser()
-  },[])
+  // useEffect(() => {
+  //   authUser()
+  // },[])
 
   return (
     <View>

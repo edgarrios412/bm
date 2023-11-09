@@ -7,9 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/adaptive-icon.png",
+      "image": "",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#d82435"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -29,7 +29,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "da9efd77-ced8-48a0-902c-70ac91c5221a"
+        "projectId": "625c5b61-64b9-4262-9ae2-0a06409ad3d5"
       }
     }
   }
